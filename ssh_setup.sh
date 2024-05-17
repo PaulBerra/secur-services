@@ -56,13 +56,6 @@ port = ssh
 logpath = %(sshd_log)s
 backend = %(sshd_backend)s
 
-[sshd-ddos]
-enabled = true
-port = ssh
-filter = sshd-ddos
-logpath = %(sshd_log)s
-backend = %(sshd_backend)s
-
 [apache-auth]
 enabled = true
 port = http,https
@@ -96,7 +89,18 @@ EOL" || { printf "Failed to write Fail2Ban configuration.\n" >&2; return 1; }
 
     sudo systemctl enable fail2ban || { printf "Failed to enable Fail2Ban.\n" >&2; return 1; }
     sudo systemctl start fail2ban || { printf "Failed to start Fail2Ban.\n" >&2; return 1; }
-    sudo systemctl restart fail2ban || { printf "Failed to restart Fail2Ban.\n" >&2; return 1; }
+}
+
+# Start Fail2Ban and jails
+start_fail2ban_jails() {
+    sudo fail2ban-client reload || { printf "Failed to reload Fail2Ban.\n" >&2; return 1; }
+    sudo fail2ban-client start sshd || { printf "Failed to start sshd jail.\n" >&2; return 1; }
+    sudo fail2ban-client start apache-auth || { printf "Failed to start apache-auth jail.\n" >&2; return 1; }
+    sudo fail2ban-client start nginx-http-auth || { printf "Failed to start nginx-http-auth jail.\n" >&2; return 1; }
+    sudo fail2ban-client start vsftpd || { printf "Failed to start vsftpd jail.\n" >&2; return 1; }
+    sudo fail2ban-client start postfix || { printf "Failed to start postfix jail.\n" >&2; return 1; }
+    sudo fail2ban-client start dovecot || { printf "Failed to start dovecot jail.\n" >&2; return 1; }
+    sudo fail2ban-client start mysqld-auth || { printf "Failed to start mysqld-auth jail.\n" >&2; return 1; }
 }
 
 # Main function
@@ -106,8 +110,7 @@ main() {
     harden_ssh
     configure_ufw
     configure_fail2ban
-    clear
-    echo "Installation Done"
+    start_fail2ban_jails
 }
 
 # Execute main function
