@@ -95,6 +95,7 @@ EOL" || { printf "Failed to write Fail2Ban configuration.\n" >&2; return 1; }
 
 # Start Fail2Ban and jails
 start_fail2ban_jails() {
+    sudo fail2ban-client start || { printf "Failed to start Fail2Ban.\n" >&2; return 1; }
     sudo fail2ban-client reload || { printf "Failed to reload Fail2Ban.\n" >&2; return 1; }
     sudo fail2ban-client start sshd || { printf "Failed to start sshd jail.\n" >&2; return 1; }
     sudo fail2ban-client start apache-auth || { printf "Failed to start apache-auth jail.\n" >&2; return 1; }
