@@ -18,8 +18,7 @@ fi
 install_packages() {
     sudo apt update || { printf "apt update failed.\n" >&2; return 1; }
     sudo apt install -y openssh-server fail2ban ufw || { printf "Package installation failed.\n" >&2; return 1; }
-    sudo apt install -y apache2 nginx vsftpd postfix dovecot mysql-server || { printf "Services installation failed.\n" >&2; return 1; }
-
+    sudo apt install -y apache2 nginx vsftpd mysql-server || { printf "Services installation failed.\n" >&2; return 1; }
 }
 
 # Enable and start SSH service
@@ -72,16 +71,6 @@ logpath = %(nginx_error_log)s
 enabled = true
 port = ftp,ftp-data,ftps,ftps-data
 logpath = /var/log/vsftpd.log
-
-[postfix]
-enabled = true
-port = smtp,ssmtp
-logpath = /var/log/mail.log
-
-[dovecot]
-enabled = true
-port = pop3,pop3s,imap,imaps,submission,submissions
-logpath = /var/log/mail.log
 
 [mysqld-auth]
 enabled = true
