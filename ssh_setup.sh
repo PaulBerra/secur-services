@@ -18,7 +18,7 @@ fi
 install_packages() {
     sudo apt update || { printf "apt update failed.\n" >&2; return 1; }
     sudo apt install -y openssh-server fail2ban ufw || { printf "Package installation failed.\n" >&2; return 1; }
-    sudo apt install -y apache2 nginx vsftpd mysql-server || { printf "Services installation failed.\n" >&2; return 1; }
+    sudo apt install -y apache2 nginx mysql-server || { printf "Services installation failed.\n" >&2; return 1; }
 }
 
 # Enable and start SSH service
@@ -67,11 +67,6 @@ enabled = true
 port = http,https
 logpath = %(nginx_error_log)s
 
-[vsftpd]
-enabled = true
-port = ftp,ftp-data,ftps,ftps-data
-logpath = /var/log/vsftpd.log
-
 [mysqld-auth]
 enabled = true
 port = 3306
@@ -89,9 +84,6 @@ start_fail2ban_jails() {
     sudo fail2ban-client start sshd || { printf "Failed to start sshd jail.\n" >&2; return 1; }
     sudo fail2ban-client start apache-auth || { printf "Failed to start apache-auth jail.\n" >&2; return 1; }
     sudo fail2ban-client start nginx-http-auth || { printf "Failed to start nginx-http-auth jail.\n" >&2; return 1; }
-    sudo fail2ban-client start vsftpd || { printf "Failed to start vsftpd jail.\n" >&2; return 1; }
-    sudo fail2ban-client start postfix || { printf "Failed to start postfix jail.\n" >&2; return 1; }
-    sudo fail2ban-client start dovecot || { printf "Failed to start dovecot jail.\n" >&2; return 1; }
     sudo fail2ban-client start mysqld-auth || { printf "Failed to start mysqld-auth jail.\n" >&2; return 1; }
 }
 
