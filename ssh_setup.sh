@@ -18,6 +18,8 @@ fi
 install_packages() {
     sudo apt update || { printf "apt update failed.\n" >&2; return 1; }
     sudo apt install -y openssh-server fail2ban ufw || { printf "Package installation failed.\n" >&2; return 1; }
+    sudo apt install -y apache2 nginx vsftpd postfix dovecot mysql-server || { printf "Services installation failed.\n" >&2; return 1; }
+
 }
 
 # Enable and start SSH service
